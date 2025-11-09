@@ -85,3 +85,7 @@ Thumbs.db
 # Project specific
 testlauf_zusammenfassung.md
 *.pyc
+
+# Railway Templates mit echten Credentials
+railway-env-template.txt
+.env.backup
