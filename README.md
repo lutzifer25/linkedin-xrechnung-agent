@@ -59,6 +59,9 @@ cp .env.example .env
      - Access Token und Organization ID werden **automatisch geholt** wenn Sie die App starten
      - Keine manuelle Token-Verwaltung mehr nötig
      - Sicherer: Keys werden nicht permanent gespeichert
+   - **🚂 Railway OAuth Support:**
+     - Für Railway Deployment: `LINKEDIN_REDIRECT_URI=https://your-app.railway.app/auth/callback`
+     - Siehe [RAILWAY_OAUTH_SETUP.md](RAILWAY_OAUTH_SETUP.md) für Details
    - Optional: `LINKEDIN_COMPANY_NAME` in `.env` setzen (Standard: "Invory")
 
 5. **OpenAI API Setup**:
@@ -70,9 +73,26 @@ cp .env.example .env
    - Das System untersucht automatisch invory.de und einvoicehub.de
    - Bei Fehlern werden Mock-Daten verwendet
 
+## 🧪 Testlauf durchführen
+
+### Kompletter Systemtest (EMPFOHLEN zuerst)
+
+```bash
+# Führt alle Tests durch ohne echte LinkedIn-Posts
+python testlauf.py
+```
+
+**Was wird getestet:**
+- ✅ Umgebungskonfiguration (.env Setup)
+- ✅ Python Dependencies  
+- ✅ Web-Scraping (invory.de/einvoicehub.de)
+- ✅ CrewAI Agents Initialisierung
+- ✅ LinkedIn Dynamic Auth (Dry Run)
+- ✅ Kompletter Workflow (Post-Preview)
+
 ## 💻 Verwendung
 
-### Preview-Modus (Empfohlen für Tests)
+### Preview-Modus (Sicher für Tests)
 
 Erstellt einen Post-Preview ohne zu posten:
 

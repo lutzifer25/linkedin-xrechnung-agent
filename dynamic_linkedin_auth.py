@@ -20,7 +20,7 @@ class LinkedInDynamicAuth:
         self.client_id = os.getenv("LINKEDIN_CLIENT_ID")
         self.client_secret = os.getenv("LINKEDIN_CLIENT_SECRET")
         self.company_name = os.getenv("LINKEDIN_COMPANY_NAME", "Invory")
-        self.redirect_uri = "https://www.google.com"
+        self.redirect_uri = os.getenv("LINKEDIN_REDIRECT_URI", "https://www.google.com")
         self.scopes = "r_organization_social w_organization_social r_basicprofile"
         
         # Cache für Session
