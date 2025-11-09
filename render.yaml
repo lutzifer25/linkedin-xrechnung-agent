@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: linkedin-xrechnung-agent
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python3 scheduler.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: LINKEDIN_ACCESS_TOKEN
+        sync: false
+      - key: LINKEDIN_CLIENT_ID
+        sync: false
+      - key: LINKEDIN_CLIENT_SECRET
+        sync: false
+      - key: LINKEDIN_COMPANY_NAME
+        value: Invory
+      - key: POST_FREQUENCY
+        value: daily
+      - key: POST_TIME
+        value: "09:00"
+
+cronJobs:
+  - name: linkedin-post-daily
+    schedule: "0 9 * * *"
+    command: python3 main.py --mode post
+    envVars:
+      - key: OPENAI_API_KEY
+        fromService:
+          type: web
+          name: linkedin-xrechnung-agent
+          property: envVar
+          name: OPENAI_API_KEY
+      - key: LINKEDIN_ACCESS_TOKEN
+        fromService:
+          type: web
+          name: linkedin-xrechnung-agent
+          property: envVar
+          name: LINKEDIN_ACCESS_TOKEN
+
