@@ -54,7 +54,7 @@ python main.py --mode schedule --frequency daily --time 09:00
 ## Kritische Integration Points
 
 ### CrewAI Agent Initialization
-Alle Agents erben von `crewai.Agent` mit spezifischen `role`, `goal`, `backstory`. LLM-Integration über `ChatOpenAI` mit einheitlicher Temperatur aus `config.py`.
+Alle Agents erben von `crewai.Agent` mit spezifischen `role`, `goal`, `backstory`. LLM-Integration über direkten Model-String (CrewAI 1.4+ Pattern).
 
 ### LinkedIn Organization ID Workflow
 1. Prüfung `LINKEDIN_ORGANIZATION_ID` in .env
@@ -74,7 +74,7 @@ Alle Agents erben von `crewai.Agent` mit spezifischen `role`, `goal`, `backstory
 - 3000 Zeichen LinkedIn-Limit enforcement
 
 ### File Organization
-- **Agents**: Immer mit CrewAI base class, LLM in constructor
+- **Agents**: CrewAI base class with `llm=OPENAI_MODEL` string (CrewAI 1.4+)
 - **Services**: Pure Python classes, external API wrappers
 - **Tests**: Separate test methods per component in `test_system.py`
 
@@ -85,8 +85,8 @@ SETTING = os.getenv("SETTING", "default_value")
 ```
 
 ## Dependencies & Versions
-- **CrewAI**: Multi-Agent orchestration framework
-- **LangChain + OpenAI**: LLM integration
+- **CrewAI >=0.70.0**: Multi-Agent orchestration framework
+- **LangChain >=0.2.0 + OpenAI >=1.35.0**: LLM integration
 - **BeautifulSoup4**: Web scraping
 - **requests**: HTTP clients
 - **python-dotenv**: Environment management
