@@ -9,6 +9,7 @@ from config import (
     LINKEDIN_ORGANIZATION_ID,
     LINKEDIN_COMPANY_NAME
 )
+from dynamic_linkedin_auth import get_linkedin_credentials
 
 logger = logging.getLogger(__name__)
 
@@ -16,24 +17,32 @@ class LinkedInClient:
     """Client für die Integration mit LinkedIn API"""
     
     def __init__(self):
+        # Versuche zuerst statische Konfiguration
         self.access_token = LINKEDIN_ACCESS_TOKEN
         self.organization_id = LINKEDIN_ORGANIZATION_ID
         self.company_name = LINKEDIN_COMPANY_NAME or "Invory"
         self.base_url = "https://api.linkedin.com/v2"
+        
+        # Falls keine statischen Credentials, verwende dynamische Authentifizierung
+        if not self.access_token or not self.organization_id:
+            logger.info("🔑 Statische LinkedIn Credentials fehlen - verwende dynamische Authentifizierung")
+            try:
+                dynamic_token, dynamic_org_id = get_linkedin_credentials()
+                if dynamic_token and dynamic_org_id:
+                    self.access_token = dynamic_token
+                    self.organization_id = dynamic_org_id
+                    logger.info("✅ Dynamische LinkedIn Authentifizierung erfolgreich")
+                else:
+                    logger.warning("❌ Dynamische LinkedIn Authentifizierung fehlgeschlagen")
+            except Exception as e:
+                logger.error(f"❌ Fehler bei dynamischer Authentifizierung: {str(e)}")
+        
+        # Setze Headers
         self.headers = {
             "Authorization": f"Bearer {self.access_token}",
             "Content-Type": "application/json",
             "X-Restli-Protocol-Version": "2.0.0"
         } if self.access_token else {}
-        
-        # Wenn keine Organization ID vorhanden ist, versuche sie automatisch abzurufen
-        if not self.organization_id and self.access_token:
-            logger.info(f"Organization ID nicht in Konfiguration gefunden. Suche nach Unternehmen: {self.company_name}")
-            # Versuche zuerst über das Profil (wenn Benutzer Administrator ist)
-            self.organization_id = self._get_organization_id_from_profile()
-            # Falls das nicht funktioniert, versuche über Namenssuche
-            if not self.organization_id:
-                self.organization_id = self._get_organization_id_by_name(self.company_name)
     
     def create_post(self, text: str, visibility: str = "PUBLIC") -> Optional[Dict]:
         """

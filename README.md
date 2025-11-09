@@ -48,12 +48,17 @@ cp .env.example .env
 # Bearbeite .env und füge deine API-Keys ein
 ```
 
-4. **LinkedIn API Setup**:
+4. **LinkedIn API Setup** (Dynamisch zur Laufzeit):
    - Erstelle eine LinkedIn App unter https://www.linkedin.com/developers/
-   - Erhalte Client ID, Client Secret und Access Token
-   - Füge die Werte in `.env` ein
-   - **Organization ID**: Wird automatisch über die LinkedIn API abgerufen (Unternehmensname: "Invory")
-   - Falls automatischer Abruf fehlschlägt, kann die Organization ID manuell in `.env` gesetzt werden
+   - Füge **nur** Client ID und Client Secret in `.env` ein:
+   ```bash
+   LINKEDIN_CLIENT_ID=your_client_id
+   LINKEDIN_CLIENT_SECRET=your_client_secret
+   ```
+   - **🔥 Neu: Automatische Authentifizierung zur Laufzeit!**
+     - Access Token und Organization ID werden **automatisch geholt** wenn Sie die App starten
+     - Keine manuelle Token-Verwaltung mehr nötig
+     - Sicherer: Keys werden nicht permanent gespeichert
    - Optional: `LINKEDIN_COMPANY_NAME` in `.env` setzen (Standard: "Invory")
 
 5. **OpenAI API Setup**:

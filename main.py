@@ -6,6 +6,7 @@ import sys
 from multi_agent_system import LinkedInPostMultiAgentSystem
 from scheduler import PostScheduler
 from config import POST_FREQUENCY, POST_TIME
+from dynamic_linkedin_auth import check_linkedin_setup
 import logging
 
 logging.basicConfig(
@@ -16,6 +17,13 @@ logger = logging.getLogger(__name__)
 
 def main():
     """Hauptfunktion"""
+    print("🚀 LinkedIn XRechnung Agent Multi-Agent System")
+    print("=" * 60)
+    
+    # Prüfe LinkedIn Setup
+    if not check_linkedin_setup():
+        sys.exit(1)
+    
     parser = argparse.ArgumentParser(
         description='LinkedIn Post Multi-Agent System für XRechnung mit invory.de'
     )
