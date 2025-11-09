@@ -2,19 +2,13 @@
 Content Agent - Erstellt LinkedIn-Posts basierend auf Recherche
 """
 from crewai import Agent
-from langchain_openai import ChatOpenAI
-from config import OPENAI_API_KEY, OPENAI_MODEL, MAX_POST_LENGTH
+from config import OPENAI_MODEL, MAX_POST_LENGTH
 
 class ContentAgent:
     """Agent für die Erstellung von LinkedIn-Post-Inhalten"""
     
     def __init__(self):
-        self.llm = ChatOpenAI(
-            temperature=0.8,
-            model_name=OPENAI_MODEL,
-            openai_api_key=OPENAI_API_KEY
-        )
-        
+        # CrewAI 1.4+ uses simplified LLM specification
         self.agent = Agent(
             role='LinkedIn Content Creator für XRechnung',
             goal='Erstelle ansprechende, informative LinkedIn-Posts zu XRechnung-Themen',
@@ -25,7 +19,7 @@ class ContentAgent:
             und enthalten einen klaren Call-to-Action.""",
             verbose=True,
             allow_delegation=False,
-            llm=self.llm
+            llm=OPENAI_MODEL  # CrewAI 1.4+ accepts model string directly
         )
     
     def create_post(self, research_data: dict, invory_data: dict = None) -> str:

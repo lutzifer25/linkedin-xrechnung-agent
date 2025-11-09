@@ -2,19 +2,13 @@
 Review Agent - Prüft und verbessert erstellte Posts
 """
 from crewai import Agent
-from langchain_openai import ChatOpenAI
-from config import OPENAI_API_KEY, OPENAI_MODEL, MAX_POST_LENGTH
+from config import OPENAI_MODEL, MAX_POST_LENGTH
 
 class ReviewAgent:
     """Agent für die Überprüfung und Verbesserung von LinkedIn-Posts"""
     
     def __init__(self):
-        self.llm = ChatOpenAI(
-            temperature=0.3,
-            model_name=OPENAI_MODEL,
-            openai_api_key=OPENAI_API_KEY
-        )
-        
+        # CrewAI 1.4+ uses simplified LLM specification
         self.agent = Agent(
             role='LinkedIn Post Quality Reviewer',
             goal='Überprüfe und verbessere LinkedIn-Posts auf Qualität, Compliance und Wirkung',
@@ -28,7 +22,7 @@ class ReviewAgent:
             Du sorgst dafür, dass jeder Post den höchsten Qualitätsstandards entspricht.""",
             verbose=True,
             allow_delegation=False,
-            llm=self.llm
+            llm=OPENAI_MODEL  # CrewAI 1.4+ accepts model string directly
         )
     
     def review_post(self, post: str, research_data: dict) -> dict:
