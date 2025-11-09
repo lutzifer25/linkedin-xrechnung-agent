@@ -21,7 +21,7 @@ class LinkedInDynamicAuth:
         self.client_secret = os.getenv("LINKEDIN_CLIENT_SECRET")
         self.company_name = os.getenv("LINKEDIN_COMPANY_NAME", "Invory")
         self.redirect_uri = os.getenv("LINKEDIN_REDIRECT_URI", "https://www.google.com")
-        self.scopes = "r_organization_social w_organization_social r_basicprofile"
+        self.scopes = "openid profile email w_member_social"  # Standard-Rechte für persönliche Posts
         
         # Cache für Session
         self._access_token = None
