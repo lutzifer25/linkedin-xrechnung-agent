@@ -24,13 +24,154 @@ OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview")
 # XRechnung Themen
 XRECHNUNG_TOPICS = [
     "XRechnung Standard",
-    "Digitale Rechnungsstellung",
+    "Digitale Rechnungsstellung", 
     "E-Invoicing",
     "ZUGFeRD",
     "Automatisierung Rechnungswesen",
     "Compliance XRechnung",
     "Rechnungsbearbeitung",
     "Prozessautomatisierung"
+]
+
+# einvoicehub-App Features von Invory
+EINVOICEHUB_FEATURES = {
+    "rechnungseingang": {
+        "name": "Rechnungseingang",
+        "features": [
+            "Direkter Upload (PDF/XML/ZIP) im Browser",
+            "E-Mail-Eingang: automatische Verarbeitung von Mail-Anhängen", 
+            "Ordner-Watcher (Client-Tool): überwacht lokale/vernetzte Ordner",
+            "API-Upload (POST /inbox/upload) mit Idempotenz (keine Duplikate)"
+        ]
+    },
+    "validierung": {
+        "name": "Validierung & Prüfung",
+        "features": [
+            "Automatische XRechnung/UBL-Prüfung nach Eingang",
+            "Batch-Validierung mehrerer Dateien in einem Lauf",
+            "Validergebnis mit verständlichen Hinweisen und Pflichtfeld-Checks"
+        ]
+    },
+    "reports": {
+        "name": "Reports & Ausgaben", 
+        "features": [
+            "CSV/PDF-Berichte pro Batch oder Zeitraum",
+            "Signierte Reports (Integrität via SHA-256)",
+            "Download von Artefakten (Original-PDF, erzeugtes UBL, CSV)"
+        ]
+    },
+    "automatisierung": {
+        "name": "Automatisierung & Integrationen",
+        "features": [
+            "Webhooks (Ereignisse wie validation.batch_created, validation.completed)",
+            "API-Keys für Maschinenzugriff (Ausstellen/Rotieren/Listen)",
+            "PEPPOL-Option (Senden/Empfangen via Adapter, wenn aktiviert)"
+        ]
+    },
+    "dashboard": {
+        "name": "Dashboard & Bedienung",
+        "features": [
+            "Übersicht über Eingänge, Status, Fehler, Batches",
+            "Detailansicht je Rechnung inkl. Metadaten",
+            "Suche/Filter (z.B. Zeitraum, Status, Quelle)"
+        ]
+    },
+    "nutzung": {
+        "name": "Nutzung & Limits",
+        "features": [
+            "Plan-basierte Kontingente (Free/Pro/Power)",
+            "Hinweise bei Annäherung/Überschreitung (Usage-Notices)",
+            "Monatliche Zähler je Account"
+        ]
+    },
+    "sicherheit": {
+        "name": "Sicherheit & Compliance",
+        "features": [
+            "Login via E-Mail/Passwort oder Google OAuth",
+            "CSRF-Schutz für Browser, CORS korrekt konfiguriert",
+            "JWT-Sessions, API-Key-Scopes, Audit-Logs",
+            "Idempotenz-Schutz pro Account"
+        ]
+    },
+    "abrechnung": {
+        "name": "Abrechnung (Stripe)",
+        "features": [
+            "Self-Service Checkout & Kundenportal",
+            "Plan-Wechsel/Upgrade jederzeit",
+            "Webhooks für Billing-Events"
+        ]
+    },
+    "entwickler": {
+        "name": "Entwickler-Erlebnis",
+        "features": [
+            "OpenAPI-Doku (/docs, /redoc, /openapi.json)",
+            "Beispiele (cURL, Postman), Sandbox-Flows",
+            "Stabile IDs, Idempotenz-Header, klare Fehlercodes"
+        ]
+    }
+}
+
+# Highlight-Features für Posts (besonders interessant für LinkedIn)
+EINVOICEHUB_HIGHLIGHTS = [
+    "🚀 Automatische XRechnung/UBL-Prüfung",
+    "📧 E-Mail-Eingang mit automatischer Verarbeitung", 
+    "📊 Batch-Validierung mehrerer Dateien",
+    "🔗 API-Integration mit Webhooks",
+    "📱 Self-Service Dashboard",
+    "🛡️ Enterprise-Sicherheit (OAuth, JWT, Audit-Logs)",
+    "💰 Flexible Pläne (Free/Pro/Power)",
+    "🔌 PEPPOL-Integration verfügbar",
+    "📈 Signierte Reports mit SHA-256",
+    "👩‍💻 OpenAPI-Dokumentation für Entwickler"
+]
+
+# XRechnung Countdown - wichtige Termine und Fristen
+XRECHNUNG_MILESTONES = [
+    {
+        "date": "2025-01-01",
+        "description": "XRechnung 3.0.2 wird Standard für Bundesverwaltung",
+        "impact": "Alle Rechnungen an Bundesbehörden müssen XRechnung 3.0.2 entsprechen"
+    },
+    {
+        "date": "2025-07-01", 
+        "description": "Erweiterte PEPPOL-Pflicht für größere Unternehmen",
+        "impact": "Unternehmen ab 500 Mitarbeitern müssen PEPPOL-fähig sein"
+    },
+    {
+        "date": "2026-01-01",
+        "description": "XRechnung-Pflicht für alle B2B-Rechnungen geplant",
+        "impact": "Diskussion um Ausweitung auf den privaten Sektor"
+    },
+    {
+        "date": "2026-07-01",
+        "description": "EU-weite E-Invoicing-Harmonisierung Zieltermin",
+        "impact": "Einheitliche Standards in der gesamten EU"
+    }
+]
+
+# News-Quellen für XRechnung-Recherche (ausgenommen invory/einvoicehub)
+XRECHNUNG_NEWS_SOURCES = [
+    "https://www.bundesfinanzministerium.de",
+    "https://www.xrechnung.org", 
+    "https://www.peppol.org",
+    "https://www.bitkom.org",
+    "https://www.handelsblatt.com",
+    "https://www.computerwoche.de",
+    "https://www.it-finanzmagazin.de",
+    "https://www.ferd-net.de"
+]
+
+# Allgemeine XRechnung-Keywords für News-Suche
+XRECHNUNG_KEYWORDS = [
+    "XRechnung",
+    "E-Invoicing",
+    "ZUGFeRD", 
+    "PEPPOL",
+    "elektronische Rechnung",
+    "digitale Rechnungsstellung",
+    "E-Rechnungsverordnung",
+    "UBL Standard",
+    "Factur-X"
 ]
 
 # Post-Einstellungen

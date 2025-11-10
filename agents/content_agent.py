@@ -45,19 +45,33 @@ class ContentAgent:
         invory_url = research_data.get('invory_url', 'https://invory.de')
         einvoicehub_url = research_data.get('einvoicehub_url', 'https://einvoicehub.de')
         
-        # Features von beiden Websites
+        # Features von beiden Websites - erweitert mit News und Countdown
         invory_features = invory_data_from_research.get('invory_features', []) if invory_data_from_research else []
-        einvoicehub_features = einvoicehub_data.get('einvoicehub_features', []) if einvoicehub_data else []
+        einvoicehub_features = research_data.get('einvoicehub_features', [])
+        einvoicehub_highlights = research_data.get('einvoicehub_highlights', [])
         
-        # Erstelle Post basierend auf Daten
+        # News und Countdown Daten
+        news_data = research_data.get('news_data', {})
+        countdown_data = research_data.get('countdown_data', {})
+        
+        # Erstelle Post basierend auf Daten - mit News und Countdown
         post = f"""💼 {topic}: Die digitale Transformation im Rechnungswesen schreitet voran.
 
 🔍 Aktuelle Entwicklungen zeigen, wie wichtig standardisierte E-Invoicing-Lösungen wie XRechnung geworden sind. Unternehmen profitieren von automatisierten Prozessen und verbesserter Compliance.
 
 ✅ Wichtigste Erkenntnisse:"""
         
-        for i, point in enumerate(key_points[:3], 1):
-            post += f"\n• {point}"
+        # Füge Countdown als ersten Punkt hinzu, wenn verfügbar
+        if countdown_data and countdown_data.get('next_milestone'):
+            milestone = countdown_data['next_milestone']
+            post += f"\n• {milestone['countdown_text']} bis {milestone['description']}"
+        
+        # Füge restliche key_points hinzu (weniger als vorher, da Countdown schon da ist)
+        remaining_points = 2 if countdown_data and countdown_data.get('next_milestone') else 3
+        for i, point in enumerate(key_points[:remaining_points]):
+            # Überspringe Countdown-Duplikate
+            if not ("⏰" in point and countdown_data and countdown_data.get('next_milestone')):
+                post += f"\n• {point}"
         
         # Füge Informationen zu invory.de hinzu
         if invory_features:
@@ -67,10 +81,18 @@ class ContentAgent:
                 for feature in invory_features[:2]:
                     post += f"\n• {feature}"
         
-        # Füge Informationen zu einvoicehub.de hinzu
-        if einvoicehub_features:
+        # Füge spezifische einvoicehub.de Features hinzu
+        if einvoicehub_highlights or einvoicehub_features:
             post += f"\n\n📊 Plattformen wie {einvoicehub_url} ermöglichen es Unternehmen, digitale Rechnungsprozesse zu optimieren und zu automatisieren."
-            if len(einvoicehub_features) > 0:
+            
+            # Verwende Highlights wenn verfügbar, sonst Features
+            if einvoicehub_highlights:
+                post += f"\n\n🎯 Highlights von {einvoicehub_url}:"
+                for highlight in einvoicehub_highlights[:3]:
+                    # Entferne Emojis aus den Highlights für cleanen Text
+                    clean_highlight = highlight.replace("🚀", "").replace("📧", "").replace("📊", "").replace("🔗", "").replace("📱", "").replace("🛡️", "").replace("💰", "").replace("🔌", "").replace("📈", "").replace("👩‍💻", "").strip()
+                    post += f"\n• {clean_highlight}"
+            elif einvoicehub_features:
                 post += f"\n\n🎯 Features von {einvoicehub_url}:"
                 for feature in einvoicehub_features[:2]:
                     post += f"\n• {feature}"
