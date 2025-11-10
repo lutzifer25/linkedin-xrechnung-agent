@@ -6,19 +6,20 @@ Dieses System implementiert ein **Multi-Agent-Framework** mit drei spezialisiert
 
 ### Kernkomponenten
 
-- **`multi_agent_system.py`**: Orchestrator für den kompletten Workflow
-- **`agents/`**: Drei spezialisierte CrewAI Agents (Research, Content, Review)
-- **`services/`**: External API Clients (LinkedIn, Web-Scraping für invory.de/einvoicehub.de)
+- **`multi_agent_system.py`**: Orchestrator für den kompletten Workflow mit Storytelling und Bildgenerierung
+- **`agents/`**: Vier spezialisierte Agents (Research, Content mit Storytelling, Review, Image mit DALL-E 3)
+- **`services/`**: External API Clients (LinkedIn mit Bild-Upload, Web-Scraping für invory.de/einvoicehub.de)
 - **`main.py`**: CLI mit drei Modi (`preview`, `post`, `schedule`)
 
 ## Wichtige Patterns
 
-### Multi-Agent Workflow
+### Multi-Agent Workflow mit Storytelling & Bildern
 Alle Funktionalität läuft über `LinkedInPostMultiAgentSystem`:
 ```python
-# Standard-Flow: Research → Content → Review → Optional Post
+# Enhanced-Flow: Research → Image Generation → Storytelling Content → Review → Optional Post mit Bild
 system = LinkedInPostMultiAgentSystem()
 result = system.create_and_post(topic="XRechnung", auto_post=False)
+# result enthält: post_data, storytelling_structure, image_data, character_count
 ```
 
 ### Web-Scraping Pattern
@@ -68,14 +69,17 @@ Alle Agents erben von `crewai.Agent` mit spezifischen `role`, `goal`, `backstory
 
 ## Spezifische Konventionen
 
-### XRechnung Domain Logic
-- Themen-Templates in `XRECHNUNG_TOPICS` (config.py)
+### XRechnung Domain Logic mit Storytelling
+- **Storytelling-Strukturen**: `STORYTELLING_STRUCTURES` in config.py (Hero's Journey, Problem-Solution, Future Vision, Behind Scenes)
+- **Bild-Themes**: `XRECHNUNG_IMAGE_THEMES` für DALL-E 3 Prompts mit Comic-Style
+- **Content-Strategy**: Narrative Posts statt sachliche Fakten, emotionale Geschichten über XRechnung-Transformation
 - Automatische Link-Integration zu invory.de/einvoicehub.de in allen Posts
-- 3000 Zeichen LinkedIn-Limit enforcement
+- 3000 Zeichen LinkedIn-Limit enforcement mit Storytelling-Optimierung
 
 ### File Organization
-- **Agents**: CrewAI base class with `llm=OPENAI_MODEL` string (CrewAI 1.4+)
-- **Services**: Pure Python classes, external API wrappers
+- **Agents**: CrewAI base class (Content/Research/Review) + Pure Python class (Image) mit `llm=OPENAI_MODEL`
+- **Image Agent**: Eigene Klasse für DALL-E 3, nicht CrewAI Agent (wegen OpenAI Client Konflikt)
+- **Services**: LinkedIn Client mit Bild-Upload, Web-Scraping Clients  
 - **Tests**: Separate test methods per component in `test_system.py`
 
 ### Environment Variables Pattern
@@ -86,9 +90,9 @@ SETTING = os.getenv("SETTING", "default_value")
 
 ## Dependencies & Versions
 - **CrewAI >=0.70.0**: Multi-Agent orchestration framework
-- **LangChain >=0.2.0 + OpenAI >=1.35.0**: LLM integration
+- **LangChain >=0.2.0 + OpenAI >=1.35.0**: LLM integration + DALL-E 3
 - **BeautifulSoup4**: Web scraping
-- **requests**: HTTP clients
+- **requests**: HTTP clients + Bild-Downloads
 - **python-dotenv**: Environment management
 
 Beim Hinzufügen neuer Features: Folge dem Agent/Service-Pattern, nutze die existierenden Mock-Data-Fallbacks, und teste immer zuerst im Preview-Modus.

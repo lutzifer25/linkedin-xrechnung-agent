@@ -1,8 +1,10 @@
 """
-LinkedIn API Client für das Posting von LinkedIn-Posts
+LinkedIn API Client für das Posting von LinkedIn-Posts mit Bildern
 """
 import requests
-from typing import Dict, Optional
+import os
+import tempfile
+from typing import Dict, Optional, Union
 import logging
 from config import (
     LINKEDIN_ACCESS_TOKEN,
@@ -45,13 +47,15 @@ class LinkedInClient:
             "X-Restli-Protocol-Version": "2.0.0"
         } if self.access_token else {}
     
-    def create_post(self, text: str, visibility: str = "PUBLIC") -> Optional[Dict]:
+    def create_post(self, text: str, visibility: str = "PUBLIC", image_url: str = None, image_path: str = None) -> Optional[Dict]:
         """
-        Erstellt einen LinkedIn-Post (persönlich mit Standard-Scopes)
+        Erstellt einen LinkedIn-Post (persönlich mit Standard-Scopes) optional mit Bild
         
         Args:
             text: Post-Text
             visibility: Sichtbarkeit (PUBLIC, CONNECTIONS, LOGGED_IN_MEMBERS)
+            image_url: URL eines Bildes zum Download und Upload
+            image_path: Lokaler Pfad zu einem Bild
             
         Returns:
             dict: Antwort von LinkedIn API oder None bei Fehler
@@ -61,10 +65,10 @@ class LinkedInClient:
             return None
             
         # Verwende persönlichen Post mit Standard-Scopes
-        return self._create_personal_post(text, visibility)
+        return self._create_personal_post(text, visibility, image_url, image_path)
     
-    def _create_personal_post(self, text: str, visibility: str = "PUBLIC") -> Optional[Dict]:
-        """Erstellt einen persönlichen LinkedIn-Post"""
+    def _create_personal_post(self, text: str, visibility: str = "PUBLIC", image_url: str = None, image_path: str = None) -> Optional[Dict]:
+        """Erstellt einen persönlichen LinkedIn-Post optional mit Bild"""
         try:
             # Get person URN first
             person_urn = self._get_person_urn()
@@ -74,21 +78,55 @@ class LinkedInClient:
             
             endpoint = f"{self.base_url}/ugcPosts"
             
-            payload = {
-                "author": person_urn,
-                "lifecycleState": "PUBLISHED",
-                "specificContent": {
-                    "com.linkedin.ugc.ShareContent": {
-                        "shareCommentary": {
-                            "text": text
-                        },
-                        "shareMediaCategory": "NONE"
+            # Bearbeite Bild falls vorhanden
+            media_asset_urn = None
+            if image_url or image_path:
+                media_asset_urn = self._upload_image(image_url, image_path, person_urn)
+            
+            # Basis-Payload
+            if media_asset_urn:
+                # Post mit Bild
+                payload = {
+                    "author": person_urn,
+                    "lifecycleState": "PUBLISHED",
+                    "specificContent": {
+                        "com.linkedin.ugc.ShareContent": {
+                            "shareCommentary": {
+                                "text": text
+                            },
+                            "shareMediaCategory": "IMAGE",
+                            "media": [
+                                {
+                                    "status": "READY",
+                                    "description": {
+                                        "text": "XRechnung Illustration"
+                                    },
+                                    "media": media_asset_urn
+                                }
+                            ]
+                        }
+                    },
+                    "visibility": {
+                        "com.linkedin.ugc.MemberNetworkVisibility": visibility
                     }
-                },
-                "visibility": {
-                    "com.linkedin.ugc.MemberNetworkVisibility": visibility
                 }
-            }
+            else:
+                # Post ohne Bild
+                payload = {
+                    "author": person_urn,
+                    "lifecycleState": "PUBLISHED",
+                    "specificContent": {
+                        "com.linkedin.ugc.ShareContent": {
+                            "shareCommentary": {
+                                "text": text
+                            },
+                            "shareMediaCategory": "NONE"
+                        }
+                    },
+                    "visibility": {
+                        "com.linkedin.ugc.MemberNetworkVisibility": visibility
+                    }
+                }
             
             response = requests.post(
                 endpoint,
@@ -128,6 +166,116 @@ class LinkedInClient:
             
         except Exception as e:
             print(f"❌ Fehler bei Person URN Abruf: {str(e)}")
+            return None
+    
+    def _upload_image(self, image_url: str = None, image_path: str = None, person_urn: str = None) -> Optional[str]:
+        """
+        Lädt ein Bild zu LinkedIn hoch und gibt die Asset URN zurück
+        
+        Args:
+            image_url: URL eines Bildes zum Download
+            image_path: Lokaler Pfad zu einem Bild  
+            person_urn: Person URN für den Upload
+            
+        Returns:
+            str: Asset URN für das hochgeladene Bild oder None
+        """
+        try:
+            # Besorge Bilddaten
+            image_data = None
+            filename = "xrechnung_image.png"
+            
+            if image_url:
+                print(f"📥 Lade Bild von URL herunter: {image_url[:50]}...")
+                response = requests.get(image_url, timeout=30)
+                response.raise_for_status()
+                image_data = response.content
+                # Versuche Dateiname aus URL zu extrahieren
+                if '.' in image_url.split('/')[-1]:
+                    filename = image_url.split('/')[-1].split('?')[0]
+                    
+            elif image_path and os.path.exists(image_path):
+                print(f"📁 Lade Bild von lokalem Pfad: {image_path}")
+                with open(image_path, 'rb') as f:
+                    image_data = f.read()
+                filename = os.path.basename(image_path)
+            
+            if not image_data:
+                print("❌ Keine gültigen Bilddaten gefunden")
+                return None
+                
+            # Schritt 1: Registriere Upload
+            register_response = self._register_image_upload(person_urn, filename)
+            if not register_response:
+                print("❌ Image Upload Registrierung fehlgeschlagen")
+                return None
+                
+            upload_url = register_response.get('value', {}).get('uploadMechanism', {}).get('com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest', {}).get('uploadUrl')
+            asset_urn = register_response.get('value', {}).get('asset')
+            
+            if not upload_url or not asset_urn:
+                print("❌ Upload URL oder Asset URN fehlt")
+                return None
+            
+            # Schritt 2: Lade Bild hoch
+            print(f"📤 Lade Bild zu LinkedIn hoch...")
+            upload_headers = {
+                "Authorization": f"Bearer {self.access_token}"
+            }
+            
+            upload_response = requests.put(
+                upload_url,
+                headers=upload_headers,
+                data=image_data,
+                timeout=60
+            )
+            
+            if upload_response.status_code in [200, 201]:
+                print(f"✅ Bild erfolgreich hochgeladen: {asset_urn}")
+                return asset_urn
+            else:
+                print(f"❌ Bild-Upload fehlgeschlagen: {upload_response.status_code}")
+                return None
+                
+        except Exception as e:
+            print(f"❌ Fehler beim Bild-Upload: {str(e)}")
+            return None
+    
+    def _register_image_upload(self, person_urn: str, filename: str) -> Optional[Dict]:
+        """Registriert einen Bild-Upload bei LinkedIn"""
+        try:
+            endpoint = f"{self.base_url}/assets?action=registerUpload"
+            
+            payload = {
+                "registerUploadRequest": {
+                    "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
+                    "owner": person_urn,
+                    "serviceRelationships": [
+                        {
+                            "relationshipType": "OWNER",
+                            "identifier": "urn:li:userGeneratedContent"
+                        }
+                    ]
+                }
+            }
+            
+            response = requests.post(
+                endpoint,
+                headers=self.headers,
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code in [200, 201]:
+                print("✅ Bild-Upload registriert")
+                return response.json()
+            else:
+                print(f"❌ Upload-Registrierung fehlgeschlagen: {response.status_code}")
+                print(f"Response: {response.text}")
+                return None
+                
+        except Exception as e:
+            print(f"❌ Fehler bei Upload-Registrierung: {str(e)}")
             return None
 
     def _create_organization_post(self, text: str, visibility: str = "PUBLIC") -> Optional[Dict]:

@@ -21,6 +21,11 @@ EINVOICEHUB_URL = "https://einvoicehub.de"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview")
 
+# DALL-E 3 Konfiguration für Bildgenerierung
+DALLE_MODEL = "dall-e-3"
+DALLE_QUALITY = "standard"  # "standard" oder "hd"
+DALLE_SIZE = "1024x1024"    # LinkedIn empfiehlt 1200x627, aber 1024x1024 ist universeller
+
 # XRechnung Themen
 XRECHNUNG_TOPICS = [
     "XRechnung Standard",
@@ -174,10 +179,56 @@ XRECHNUNG_KEYWORDS = [
     "Factur-X"
 ]
 
+# Storytelling Templates
+STORYTELLING_STRUCTURES = [
+    {
+        "name": "Hero's Journey",
+        "structure": "Ein Unternehmen steht vor einer großen Herausforderung → Sie entdecken XRechnung als Lösung → Nach Hindernissen erreichen sie den Erfolg",
+        "tone": "motivierend, inspirierend"
+    },
+    {
+        "name": "Problem-Solution",
+        "structure": "Alltagsproblem schildern → XRechnung als elegante Lösung vorstellen → Transformation zeigen",
+        "tone": "praktisch, lösungsorientiert"
+    },
+    {
+        "name": "Future Vision",
+        "structure": "Blick in die Zukunft der digitalen Rechnungsstellung → Countdown zu Deadlines → Handlungsaufruf",
+        "tone": "visionär, dringlich"
+    },
+    {
+        "name": "Behind the Scenes",
+        "structure": "Einblick in die Entwicklung/Arbeit bei Invory → XRechnung-Expertise → Community-Aspekt",
+        "tone": "persönlich, authentisch"
+    }
+]
+
+# Comic-Style Bild-Prompts für DALL-E 3
+IMAGE_STYLE_PROMPTS = [
+    "friendly cartoon style, flat design, business illustration",
+    "comic book style, colorful, professional but approachable",
+    "minimal vector art, modern illustration, business theme",
+    "isometric illustration style, clean lines, tech-savvy look",
+    "hand-drawn illustration style, warm colors, business setting"
+]
+
+# XRechnung-spezifische Bildmotive
+XRECHNUNG_IMAGE_THEMES = [
+    "digitale Transformation: Papierrechnungen werden zu digitalen Dokumenten",
+    "Zeitersparnis: Uhr mit sich beschleunigenden Zeigern, effiziente Prozesse",
+    "Automatisierung: Roboter und Menschen arbeiten harmonisch zusammen",
+    "Compliance: Schild oder Häkchen symbolisiert erfüllte Anforderungen", 
+    "Countdown: Kalender oder Timer zeigt nahende Deadlines",
+    "Erfolgsgeschichte: Unternehmen celebrates digitalen Wandel",
+    "Problemlösung: Komplexe Prozesse werden vereinfacht dargestellt",
+    "Zukunftsvision: moderne digitale Bürolandschaft"
+]
+
 # Post-Einstellungen
 POST_FREQUENCY = os.getenv("POST_FREQUENCY", "daily")  # daily, weekly, custom
 POST_TIME = os.getenv("POST_TIME", "09:00")  # HH:MM Format
 MAX_POST_LENGTH = 3000  # LinkedIn Post Max Length
+INCLUDE_IMAGES = os.getenv("INCLUDE_IMAGES", "true").lower() == "true"  # Bilder aktivieren/deaktivieren
 
 # Agent Konfiguration
 AGENT_TEMPERATURE = 0.7
