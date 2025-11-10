@@ -5,7 +5,7 @@ XRechnung mit invory.de und einvoicehub.de Integration plus DALL-E 3 Bildgenerie
 from agents.research_agent import ResearchAgent
 from agents.content_agent import ContentAgent
 from agents.review_agent import ReviewAgent
-from agents.image_agent import ImageAgent
+# ImageAgent wird lazy geladen um Railway Kompatibilität zu verbessern
 from services.linkedin_client import LinkedInClient
 from config import INCLUDE_IMAGES
 from typing import Dict, Optional
@@ -22,7 +22,7 @@ class LinkedInPostMultiAgentSystem:
         self.research_agent = ResearchAgent()
         self.content_agent = ContentAgent()
         self.review_agent = ReviewAgent()
-        self.image_agent = ImageAgent()
+        self.image_agent = None  # Lazy loading für bessere Railway Kompatibilität
         
         # Initialize Clients
         self.linkedin_client = LinkedInClient()
@@ -53,6 +53,11 @@ class LinkedInPostMultiAgentSystem:
             if self.include_images:
                 logger.info("🎨 Schritt 2a: Bildgenerierung durch Image Agent")
                 try:
+                    # Lazy loading des Image Agents
+                    if self.image_agent is None:
+                        from agents.image_agent import ImageAgent
+                        self.image_agent = ImageAgent()
+                    
                     # Erstelle temporäre Content-Daten für Bildgenerierung
                     temp_content_data = {
                         "topic": topic or research_data.get('topic', 'XRechnung'),
