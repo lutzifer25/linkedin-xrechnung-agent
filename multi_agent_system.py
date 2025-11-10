@@ -79,15 +79,16 @@ class LinkedInPostMultiAgentSystem:
             post_text = post_result["post_content"]
             storytelling_structure = post_result["storytelling_structure"]
             
-            # Schritt 4: Review
-            logger.info("🔍 Schritt 4: Review durch Review Agent")
-            review_result = self.review_agent.review_post(post_text, research_data)
+            # Schritt 4: Review (Text + Bild)
+            logger.info("🔍 Schritt 4: Review durch Review Agent (Text + Bild)")
+            review_result = self.review_agent.review_post(post_text, research_data, image_data)
             
             # Schritt 5: Post verbessern falls nötig
             if not review_result["approved"]:
                 logger.info("🔧 Schritt 5: Post wird verbessert")
                 post_text = self.review_agent.improve_post(post_text, review_result)
-                review_result = self.review_agent.review_post(post_text, research_data)
+                # Erneutes Review mit Bild-Daten
+                review_result = self.review_agent.review_post(post_text, research_data, image_data)
                 # Update post_result mit verbessertem Text
                 post_result["post_content"] = post_text
             

@@ -10,28 +10,38 @@ class ReviewAgent:
     def __init__(self):
         # CrewAI 1.4+ uses simplified LLM specification
         self.agent = Agent(
-            role='LinkedIn Post Quality Reviewer',
-            goal='Überprüfe und verbessere LinkedIn-Posts auf Qualität, Compliance und Wirkung',
-            backstory="""Du bist ein erfahrener Social Media Manager mit Expertise
-            in B2B-Content auf LinkedIn. Du prüfst Posts auf:
+            role='LinkedIn Content & Visual Quality Reviewer',
+            goal='Überprüfe und verbessere LinkedIn-Posts auf Qualität, Compliance und visuelle Wirkung',
+            backstory="""Du bist ein erfahrener Social Media Manager und Visual Content Specialist
+            mit Expertise in B2B-Content auf LinkedIn. Du prüfst sowohl Text als auch Bilder auf:
+            
+            TEXT-REVIEW:
             - Richtige Länge und Format
-            - Professionellen Ton
+            - Professionellen Ton und Storytelling-Qualität
             - Compliance und Richtigkeit
             - Engagement-Potenzial
             - Relevante Hashtags
-            Du sorgst dafür, dass jeder Post den höchsten Qualitätsstandards entspricht.""",
+            
+            BILD-REVIEW:
+            - Theme-Content-Passung (Bild unterstützt die Story)
+            - Professionelle Qualität (DALL-E 3 Standards)
+            - XRechnung-Relevanz und B2B-Angemessenheit
+            - Comic-Style Balance (locker aber seriös)
+            
+            Du sorgst für perfekte Text-Bild-Harmonie und höchste Qualitätsstandards.""",
             verbose=True,
             allow_delegation=False,
             llm=OPENAI_MODEL  # CrewAI 1.4+ accepts model string directly
         )
     
-    def review_post(self, post: str, research_data: dict) -> dict:
+    def review_post(self, post: str, research_data: dict, image_data: dict = None) -> dict:
         """
-        Überprüft einen Post auf Qualität und Compliance
+        Überprüft einen Post auf Qualität und Compliance (Text + Bild)
         
         Args:
             post: Der zu überprüfende Post
             research_data: Original Recherche-Daten
+            image_data: Optional - Bild-Daten vom Image Agent
             
         Returns:
             dict: Review-Ergebnis mit Bewertung und Verbesserungsvorschlägen
@@ -60,17 +70,81 @@ class ReviewAgent:
         # Prüfe auf professionellen Ton
         # (könnte erweitert werden mit Sentiment-Analyse)
         
+        # Prüfe Bild-Qualität (falls vorhanden)
+        if image_data:
+            image_issues = self._review_image(image_data, post, research_data)
+            review_result["issues"].extend(image_issues.get("issues", []))
+            review_result["suggestions"].extend(image_issues.get("suggestions", []))
+        
         # Berechne Score
-        review_result["score"] = self._calculate_score(post, review_result)
+        review_result["score"] = self._calculate_score(post, review_result, image_data)
         
         return review_result
     
-    def _calculate_score(self, post: str, review_result: dict) -> int:
-        """Berechnet einen Qualitätsscore für den Post"""
+    def _review_image(self, image_data: dict, post: str, research_data: dict) -> dict:
+        """
+        Überprüft die Qualität und Relevanz des generierten Bildes
+        
+        Args:
+            image_data: Bild-Daten vom Image Agent
+            post: Post-Text für Kontext
+            research_data: Recherche-Daten
+            
+        Returns:
+            dict: Issues und Suggestions für das Bild
+        """
+        result = {"issues": [], "suggestions": []}
+        
+        if not image_data:
+            result["suggestions"].append("Kein Bild verfügbar - erwäge Bild-Generierung")
+            return result
+        
+        # Prüfe ob Bild-URL verfügbar ist
+        if not image_data.get("image_url"):
+            result["issues"].append("Bild-URL fehlt oder ungültig")
+        
+        # Prüfe Theme-Passung zum Post-Inhalt
+        image_theme = image_data.get("theme", "")
+        post_lower = post.lower()
+        
+        # Validiere Theme-Content-Match
+        theme_matches = {
+            "countdown": ["countdown", "zeit", "deadline", "⏰"],
+            "automatisierung": ["automatisierung", "roboter", "ki", "ai"],
+            "transformation": ["transformation", "digital", "wandel"],
+            "compliance": ["compliance", "regel", "vorschrift", "häkchen"],
+            "erfolg": ["erfolg", "gewinn", "wachstum", "celebration"],
+            "problem": ["problem", "lösung", "herausforderung"],
+            "zukunft": ["zukunft", "vision", "2030", "modern"]
+        }
+        
+        # Prüfe ob Theme zum Content passt
+        theme_relevant = False
+        for theme_key, keywords in theme_matches.items():
+            if theme_key in image_theme.lower():
+                theme_relevant = any(keyword in post_lower for keyword in keywords)
+                break
+        
+        if not theme_relevant:
+            result["suggestions"].append(f"Bild-Theme '{image_theme}' passt möglicherweise nicht optimal zum Post-Inhalt")
+        
+        # Prüfe DALL-E Prompt Qualität
+        prompt = image_data.get("prompt", "")
+        if len(prompt) < 20:
+            result["suggestions"].append("Bild-Prompt könnte detaillierter sein für bessere Qualität")
+        
+        # Bonus-Bewertung für gute Bild-Integration
+        if image_data.get("style") == "DALL-E 3 Generated":
+            result["suggestions"].append("✅ Hochqualitatives DALL-E 3 Bild generiert")
+        
+        return result
+    
+    def _calculate_score(self, post: str, review_result: dict, image_data: dict = None) -> int:
+        """Berechnet einen Qualitätsscore für den Post (Text + Bild)"""
         score = 100
         
         # Abzug für Issues
-        score -= len(review_result["issues"]) * 20
+        score -= len(review_result["issues"]) * 15  # Weniger Abzug da jetzt auch Bild-Issues
         
         # Bonus für gute Struktur
         if "\n\n" in post:
@@ -80,6 +154,15 @@ class ReviewAgent:
         hashtag_count = post.count("#")
         if 3 <= hashtag_count <= 8:
             score += 10
+        
+        # Bonus für Bild-Integration
+        if image_data:
+            if image_data.get("image_url"):
+                score += 15  # Bonus für verfügbares Bild
+            if image_data.get("style") == "DALL-E 3 Generated":
+                score += 10  # Extra Bonus für DALL-E 3
+            if len(image_data.get("prompt", "")) > 30:
+                score += 5   # Bonus für detaillierten Prompt
         
         return max(0, min(100, score))
     
