@@ -109,20 +109,23 @@ class LinkedInClient:
             return None
     
     def _get_person_urn(self) -> Optional[str]:
-        """Holt die Person URN für persönliche Posts"""
+        """Holt die Person URN für persönliche Posts mit korrekter LinkedIn ID"""
         try:
-            endpoint = f"{self.base_url}/people/~"
-            response = requests.get(endpoint, headers=self.headers, timeout=10)
+            # Verwende OpenID userinfo endpoint - das funktioniert mit Standard-Scopes
+            userinfo_endpoint = "https://api.linkedin.com/v2/userinfo"
+            response = requests.get(userinfo_endpoint, headers=self.headers, timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
-                person_id = data.get('id')
+                # OpenID userinfo gibt uns die 'sub' (subject) ID
+                person_id = data.get('sub')
                 if person_id:
+                    print(f"✅ Person ID gefunden: {person_id}")
                     return f"urn:li:person:{person_id}"
             
-            print(f"❌ Fehler beim Abrufen der Person URN: {response.status_code}")
-            print(f"Response: {response.text}")
+            print(f"❌ Userinfo Fehler: {response.status_code} - {response.text}")
             return None
+            
         except Exception as e:
             print(f"❌ Fehler bei Person URN Abruf: {str(e)}")
             return None
