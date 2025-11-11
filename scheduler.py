@@ -1,12 +1,13 @@
 """
-Scheduler für automatische LinkedIn-Posts
+Scheduler für automatische LinkedIn-Posts mit Timezone-Support
 """
 import schedule
 import time
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from multi_agent_system import LinkedInPostMultiAgentSystem
 from config import POST_FREQUENCY, POST_TIME
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,7 +21,10 @@ class PostScheduler:
     
     def create_and_post_job(self):
         """Job-Funktion für automatische Post-Erstellung"""
-        logger.info(f"Starte automatische Post-Erstellung um {datetime.now()}")
+        # Deutsche Zeitzone für Logging
+        german_tz = timezone(timedelta(hours=1))  # CET (Winter), sollte CEST (Sommer +2) sein
+        current_time = datetime.now(german_tz)
+        logger.info(f"🕘 Starte automatische Post-Erstellung um {current_time.strftime('%H:%M:%S CET/CEST')}")
         
         try:
             result = self.multi_agent_system.create_and_post(auto_post=True)
@@ -51,18 +55,24 @@ class PostScheduler:
         # Lösche alle bestehenden Jobs
         schedule.clear()
         
+        # Konvertiere deutsche Zeit zu UTC für Railway Cloud
+        german_hour, german_minute = map(int, post_time.split(':'))
+        # November: CET (UTC+1), Sommer: CEST (UTC+2) - Für jetzt nehmen wir CET
+        utc_hour = (german_hour - 1) % 24  # CET ist UTC+1
+        utc_time = f"{utc_hour:02d}:{german_minute:02d}"
+        
         if frequency == "daily":
-            schedule.every().day.at(post_time).do(self.create_and_post_job)
-            logger.info(f"Täglicher Post geplant um {post_time}")
+            schedule.every().day.at(utc_time).do(self.create_and_post_job)
+            logger.info(f"🌍 Täglicher Post: {post_time} deutsche Zeit = {utc_time} UTC")
         elif frequency == "weekly":
-            schedule.every().monday.at(post_time).do(self.create_and_post_job)
-            logger.info(f"Wöchentlicher Post geplant (Montags um {post_time})")
+            schedule.every().monday.at(utc_time).do(self.create_and_post_job)
+            logger.info(f"🌍 Wöchentlicher Post: Montags {post_time} deutsche Zeit = {utc_time} UTC")
         elif frequency == "custom":
             # Beispiel: Montag, Mittwoch, Freitag
-            schedule.every().monday.at(post_time).do(self.create_and_post_job)
-            schedule.every().wednesday.at(post_time).do(self.create_and_post_job)
-            schedule.every().friday.at(post_time).do(self.create_and_post_job)
-            logger.info(f"Custom Schedule: Mo, Mi, Fr um {post_time}")
+            schedule.every().monday.at(utc_time).do(self.create_and_post_job)
+            schedule.every().wednesday.at(utc_time).do(self.create_and_post_job)
+            schedule.every().friday.at(utc_time).do(self.create_and_post_job)
+            logger.info(f"🌍 Custom Schedule: Mo, Mi, Fr {post_time} deutsche Zeit = {utc_time} UTC")
         else:
             logger.warning(f"Unbekannte Häufigkeit: {frequency}, verwende daily")
             schedule.every().day.at(post_time).do(self.create_and_post_job)
