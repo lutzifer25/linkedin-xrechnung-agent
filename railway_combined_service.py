@@ -152,6 +152,43 @@ def stop_scheduler():
         logger.error(f"❌ Scheduler Stop Fehler: {str(e)}")
         return {'status': 'error', 'message': str(e)}, 500
 
+@app.route('/test-post', methods=['POST', 'GET'])
+def test_post():
+    """Testet das Post-System manuell"""
+    try:
+        logger.info("🧪 Manueller Test-Post ausgelöst")
+        
+        # Import hier um Circular Import zu vermeiden
+        from multi_agent_system import LinkedInPostMultiAgentSystem
+        
+        # Erstelle Test-Post
+        system = LinkedInPostMultiAgentSystem()
+        result = system.create_and_post(topic="Railway Test Post", auto_post=True)
+        
+        if result.get('success'):
+            return {
+                'status': 'success',
+                'message': 'Test-Post erfolgreich erstellt',
+                'linkedin_posted': result.get('linkedin_posted', False),
+                'character_count': result.get('character_count', 0),
+                'includes_image': result.get('includes_image', False),
+                'timestamp': datetime.now().isoformat()
+            }
+        else:
+            return {
+                'status': 'error', 
+                'message': result.get('error', 'Unbekannter Fehler'),
+                'timestamp': datetime.now().isoformat()
+            }, 500
+            
+    except Exception as e:
+        logger.error(f"❌ Test-Post Fehler: {str(e)}")
+        return {
+            'status': 'error',
+            'message': str(e),
+            'timestamp': datetime.now().isoformat()
+        }, 500
+
 @app.route('/')
 def index():
     """Hauptseite mit System-Übersicht"""
@@ -163,6 +200,7 @@ def index():
         <li><a href="/scheduler/status">📊 Scheduler Status</a></li>
         <li><a href="/scheduler/start">▶️ Scheduler starten</a></li>
         <li><a href="/scheduler/stop">⏹️ Scheduler stoppen</a></li>
+        <li><a href="/test-post">🧪 Test Post (manuell)</a></li>
         <li><a href="/auth/callback">🔐 OAuth Callback</a></li>
     </ul>
     <hr>
