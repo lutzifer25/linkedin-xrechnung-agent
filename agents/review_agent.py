@@ -1,8 +1,8 @@
 """
-Review Agent - Prüft und verbessert erstellte Posts
+Review Agent - Prüft und verbessert erstellte Posts mit Anthropic Claude
 """
 from crewai import Agent
-from config import OPENAI_MODEL, MAX_POST_LENGTH
+from config import ANTHROPIC_MODEL, MAX_POST_LENGTH, ANTHROPIC_API_KEY
 
 class ReviewAgent:
     """Agent für die Überprüfung und Verbesserung von LinkedIn-Posts"""
@@ -31,7 +31,7 @@ class ReviewAgent:
             Du sorgst für perfekte Text-Bild-Harmonie und höchste Qualitätsstandards.""",
             verbose=True,
             allow_delegation=False,
-            llm=OPENAI_MODEL  # CrewAI 1.4+ accepts model string directly
+            llm=ANTHROPIC_MODEL  # Anthropic Claude für bessere Reviews
         )
     
     def review_post(self, post: str, research_data: dict, image_data: dict = None) -> dict:

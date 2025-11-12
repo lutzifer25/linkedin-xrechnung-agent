@@ -21,6 +21,10 @@ EINVOICEHUB_URL = "https://einvoicehub.de"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview")
 
+# Anthropic/Claude Konfiguration für Review Agent
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-sonnet-20240229")
+
 # DALL-E 3 Konfiguration für Bildgenerierung
 DALLE_MODEL = "dall-e-3"
 DALLE_QUALITY = "standard"  # "standard" oder "hd"

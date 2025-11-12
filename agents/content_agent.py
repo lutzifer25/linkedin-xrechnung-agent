@@ -39,8 +39,8 @@ class ContentAgent:
         Returns:
             dict: Post-Daten mit text, storytelling_structure, image_info
         """
-        # Wähle Storytelling-Struktur
-        storytelling_structure = random.choice(STORYTELLING_STRUCTURES)
+        # Wähle Storytelling-Struktur basierend auf Zeit und Content
+        storytelling_structure = self._select_smart_storytelling_structure(research_data)
         
         # Extrahiere Basisdaten
         topic = research_data.get('topic', 'XRechnung')
@@ -260,6 +260,48 @@ Stell dir vor, du könntest mit einem Fingerschnips alle deine Rechnungsprobleme
         """Legacy-Methode für Rückwärtskompatibilität - nutzt neues Storytelling"""
         result = self.create_storytelling_post(research_data, invory_data=invory_data)
         return result["post_content"]
+    
+    def _select_smart_storytelling_structure(self, research_data: dict) -> dict:
+        """
+        Wählt intelligente Storytelling-Struktur basierend auf Zeit, Content und Rotation
+        
+        Args:
+            research_data: Recherche-Daten für Context
+            
+        Returns:
+            dict: Gewählte Storytelling-Struktur
+        """
+        import datetime
+        import hashlib
+        
+        # Erstelle Seed basierend auf Datum für konsistente aber variierende Auswahl
+        today = datetime.date.today()
+        date_seed = int(hashlib.md5(str(today).encode()).hexdigest(), 16) % 10000
+        
+        topic = research_data.get('topic', 'XRechnung')
+        countdown_data = research_data.get('countdown_data', {})
+        
+        # Intelligente Auswahl basierend auf Content
+        if "countdown" in topic.lower() or countdown_data.get('next_milestone'):
+            # Bei Countdown-Content: Problem-Solution oder Future Vision
+            options = [s for s in STORYTELLING_STRUCTURES if s["name"] in ["Problem-Solution", "Future Vision"]]
+        elif "motivation" in topic.lower() or "montag" in topic.lower():
+            # Bei Motivation: Hero's Journey oder Behind Scenes  
+            options = [s for s in STORYTELLING_STRUCTURES if s["name"] in ["Hero's Journey", "Behind the Scenes"]]
+        elif "test" in topic.lower() or "debug" in topic.lower() or "behind" in topic.lower():
+            # Bei Tests/Debug: Behind Scenes für Authentizität  
+            options = [s for s in STORYTELLING_STRUCTURES if s["name"] == "Behind the Scenes"]
+        else:
+            # Standard: Alle Strukturen verfügbar
+            options = STORYTELLING_STRUCTURES
+        
+        # Wähle basierend auf Datum-Seed für Konsistenz aber tägliche Variation
+        selected_index = (date_seed + len(topic)) % len(options)
+        selected_structure = options[selected_index]
+        
+        print(f"🎭 Storytelling gewählt: {selected_structure['name']} (basierend auf '{topic}' + Datum)")
+        
+        return selected_structure
     
     def optimize_post(self, post: str) -> str:
         """

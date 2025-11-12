@@ -10,6 +10,9 @@ langchain-community>=0.2.0
 # OpenAI für DALL-E 3 Bildgenerierung
 openai>=1.35.0
 
+# Anthropic Claude für Review Agent
+anthropic>=0.34.0
+
 # LinkedIn API
 linkedin-api>=2.0.0
 
