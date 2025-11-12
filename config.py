@@ -25,6 +25,37 @@ OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-sonnet-20240229")
 
+# AI-Provider-Rotation für Diversität
+def get_research_model():
+    """Rotiert zwischen OpenAI und Anthropic für Research Agent basierend auf Datum"""
+    import datetime
+    import hashlib
+    
+    # Datum-basierte Rotation (täglich wechselnd)
+    today = datetime.date.today()
+    date_hash = int(hashlib.md5(str(today).encode()).hexdigest(), 16)
+    
+    # 50/50 Rotation zwischen OpenAI und Anthropic
+    if date_hash % 2 == 0:
+        return OPENAI_MODEL  # Gerade Tage: OpenAI GPT-4
+    else:
+        return ANTHROPIC_MODEL  # Ungerade Tage: Anthropic Claude
+
+def get_review_model():
+    """Rotiert zwischen Anthropic und OpenAI für Review Agent basierend auf Datum"""
+    import datetime
+    import hashlib
+    
+    # Datum-basierte Rotation (täglich wechselnd, gegenläufig zu Research)
+    today = datetime.date.today()
+    date_hash = int(hashlib.md5(str(today).encode()).hexdigest(), 16)
+    
+    # Gegenläufig zu Research: Wenn Research=OpenAI, dann Review=Anthropic
+    if date_hash % 2 == 0:
+        return ANTHROPIC_MODEL  # Gerade Tage: Anthropic Claude (wenn Research=OpenAI)
+    else:
+        return OPENAI_MODEL  # Ungerade Tage: OpenAI GPT-4 (wenn Research=Anthropic)
+
 # DALL-E 3 Konfiguration für Bildgenerierung
 DALLE_MODEL = "dall-e-3"
 DALLE_QUALITY = "standard"  # "standard" oder "hd"

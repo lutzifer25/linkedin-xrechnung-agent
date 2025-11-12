@@ -1,13 +1,20 @@
 """
-Review Agent - Prüft und verbessert erstellte Posts mit Anthropic Claude
+Review Agent - Prüft und verbessert erstellte Posts mit AI-Provider-Rotation
 """
 from crewai import Agent
-from config import ANTHROPIC_MODEL, MAX_POST_LENGTH, ANTHROPIC_API_KEY
+from config import get_review_model, MAX_POST_LENGTH, ANTHROPIC_API_KEY
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ReviewAgent:
     """Agent für die Überprüfung und Verbesserung von LinkedIn-Posts"""
     
     def __init__(self):
+        # AI-Provider-Rotation: Täglich wechselnd zwischen Anthropic und OpenAI
+        selected_model = get_review_model()
+        logger.info(f"🔄 Review Agent nutzt: {selected_model}")
+        
         # CrewAI 1.4+ uses simplified LLM specification
         self.agent = Agent(
             role='LinkedIn Content & Visual Quality Reviewer',
@@ -31,7 +38,7 @@ class ReviewAgent:
             Du sorgst für perfekte Text-Bild-Harmonie und höchste Qualitätsstandards.""",
             verbose=True,
             allow_delegation=False,
-            llm=ANTHROPIC_MODEL  # Anthropic Claude für bessere Reviews
+            llm=selected_model  # Rotierendes Modell (Anthropic oder OpenAI)
         )
     
     def review_post(self, post: str, research_data: dict, image_data: dict = None) -> dict:

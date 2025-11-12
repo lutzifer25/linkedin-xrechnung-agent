@@ -2,7 +2,7 @@
 Research Agent - Sammelt Informationen zu XRechnung, invory.de und einvoicehub.de
 """
 from crewai import Agent
-from config import OPENAI_MODEL, XRECHNUNG_TOPICS, EINVOICEHUB_FEATURES, EINVOICEHUB_HIGHLIGHTS, XRECHNUNG_MILESTONES, XRECHNUNG_NEWS_SOURCES, XRECHNUNG_KEYWORDS
+from config import get_research_model, XRECHNUNG_TOPICS, EINVOICEHUB_FEATURES, EINVOICEHUB_HIGHLIGHTS, XRECHNUNG_MILESTONES, XRECHNUNG_NEWS_SOURCES, XRECHNUNG_KEYWORDS
 from services.invory_client import InvoryClient
 from services.einvoicehub_client import EinvoiceHubClient
 import logging
@@ -16,6 +16,10 @@ class ResearchAgent:
     """Agent für Recherche zu XRechnung-Themen"""
     
     def __init__(self):
+        # AI-Provider-Rotation: Täglich wechselnd zwischen OpenAI und Anthropic
+        selected_model = get_research_model()
+        logger.info(f"🔄 Research Agent nutzt: {selected_model}")
+        
         # CrewAI 1.4+ uses simplified LLM specification
         self.agent = Agent(
             role='XRechnung Research Specialist',
@@ -27,7 +31,7 @@ class ResearchAgent:
             Du untersucht Webseiten, um relevante Informationen zu extrahieren und zu analysieren.""",
             verbose=True,
             allow_delegation=False,
-            llm=OPENAI_MODEL  # CrewAI 1.4+ accepts model string directly
+            llm=selected_model  # Rotierendes Modell (OpenAI oder Anthropic)
         )
         
         # Initialize Web-Clients
