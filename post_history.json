@@ -52,5 +52,155 @@
       "posted": false
     },
     "content_preview": "🔮 Eine Reise ins Jahr 2030...\n\n*Zeitreise aktiviert* ⚡\n\nDr. Mueller betritt ihr vollständig digitale..."
+  },
+  {
+    "id": 3,
+    "timestamp": "2025-11-14T19:55:06.933630",
+    "date": "2025-11-14",
+    "time": "19:55:06",
+    "mode": "preview",
+    "topic": "XRechnung Test Post #1",
+    "storytelling_structure": "Problem-Solution",
+    "ai_providers": {
+      "research_model": "gpt-4-turbo-preview",
+      "review_model": "claude-3-sonnet-20240229"
+    },
+    "review_score": 100,
+    "character_count": 1063,
+    "image": {
+      "theme": "Automatisierung: Roboter und Menschen arbeiten harmonisch zusammen",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": null,
+      "posted": false
+    },
+    "content_preview": "😰 Kennst du das Gefühl?\n\nEs ist Freitagabend, 19:30 Uhr. Während andere bereits das Wochenende genie..."
+  },
+  {
+    "id": 4,
+    "timestamp": "2025-11-14T19:55:52.823102",
+    "date": "2025-11-14",
+    "time": "19:55:52",
+    "mode": "preview",
+    "topic": "XRechnung Innovation Monday",
+    "storytelling_structure": "Future Vision",
+    "ai_providers": {
+      "research_model": "gpt-4-turbo-preview",
+      "review_model": "claude-3-sonnet-20240229"
+    },
+    "review_score": 100,
+    "character_count": 1056,
+    "image": {
+      "theme": "Erfolgsgeschichte: Unternehmen celebrates digitalen Wandel",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": null,
+      "posted": false
+    },
+    "content_preview": "🔮 Eine Reise ins Jahr 2030...\n\n*Zeitreise aktiviert* ⚡\n\nDr. Mueller betritt ihr vollständig digitale..."
+  },
+  {
+    "id": 5,
+    "timestamp": "2025-11-14T19:56:36.805632",
+    "date": "2025-11-14",
+    "time": "19:56:36",
+    "mode": "preview",
+    "topic": "Behind the Scenes bei Invory Entwicklung",
+    "storytelling_structure": "Problem-Solution",
+    "ai_providers": {
+      "research_model": "gpt-4-turbo-preview",
+      "review_model": "claude-3-sonnet-20240229"
+    },
+    "review_score": 100,
+    "character_count": 1086,
+    "image": {
+      "theme": "Compliance: Schild oder Häkchen symbolisiert erfüllte Anforderungen",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": null,
+      "posted": false
+    },
+    "content_preview": "😰 Kennst du das Gefühl?\n\nEs ist Freitagabend, 19:30 Uhr. Während andere bereits das Wochenende genie..."
+  },
+  {
+    "id": 6,
+    "timestamp": "2025-11-14T20:03:34.816850",
+    "date": "2025-11-14",
+    "time": "20:03:34",
+    "mode": "post",
+    "topic": "XRechnung Donnerstag Erfolg",
+    "storytelling_structure": "Future Vision",
+    "ai_providers": {
+      "research_model": "gpt-4-turbo-preview",
+      "review_model": "claude-3-sonnet-20240229"
+    },
+    "review_score": 100,
+    "character_count": 1056,
+    "image": {
+      "theme": "Compliance: Schild oder Häkchen symbolisiert erfüllte Anforderungen",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": "urn:li:share:7395174574599925760",
+      "posted": true
+    },
+    "content_preview": "🔮 Eine Reise ins Jahr 2030...\n\n*Zeitreise aktiviert* ⚡\n\nDr. Mueller betritt ihr vollständig digitale..."
+  },
+  {
+    "id": 7,
+    "timestamp": "2025-11-14T20:11:13.427589",
+    "date": "2025-11-14",
+    "time": "20:11:13",
+    "mode": "preview",
+    "topic": "XRechnung Future Test",
+    "storytelling_structure": "Future Vision",
+    "ai_providers": {
+      "research_model": "gpt-4-turbo-preview",
+      "review_model": "claude-3-sonnet-20240229"
+    },
+    "review_score": 100,
+    "character_count": 954,
+    "image": {
+      "theme": "digitale Transformation: Papierrechnungen werden zu digitalen Dokumenten",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": null,
+      "posted": false
+    },
+    "content_preview": "🔮 Blick ins Jahr 2030...\n\n*Vision aktiviert* ✨\n\nCEO Sarah K. schaut auf ihre Statistik: \"Letztes Jah..."
+  },
+  {
+    "id": 8,
+    "timestamp": "2025-11-14T20:11:52.143984",
+    "date": "2025-11-14",
+    "time": "20:11:52",
+    "mode": "preview",
+    "topic": "Innovation XRechnung 2025",
+    "storytelling_structure": "Future Vision",
+    "ai_providers": {
+      "research_model": "gpt-4-turbo-preview",
+      "review_model": "claude-3-sonnet-20240229"
+    },
+    "review_score": 100,
+    "character_count": 951,
+    "image": {
+      "theme": "Countdown: Kalender oder Timer zeigt nahende Deadlines",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": null,
+      "posted": false
+    },
+    "content_preview": "🌍 2030: XRechnung rettet den Planeten!\n\n*Impact aktiviert* 🌱\n\nStudie zeigt: Durch vollständige XRech..."
   }
 ]

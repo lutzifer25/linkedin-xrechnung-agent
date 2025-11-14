@@ -169,18 +169,81 @@ Was wäre, wenn ich dir sage, dass XRechnung-Automatisierung das alles ändern k
         return story
     
     def _create_future_vision_story(self, topic: str, countdown_data: dict, news_data: dict) -> str:
-        """Erstellt eine Future Vision Geschichte"""
+        """Erstellt eine Future Vision Geschichte mit rotierenden Templates"""
+        import random
+        import datetime
+        import hashlib
         
-        story = f"""🔮 Eine Reise ins Jahr 2030...
+        # Datum-basierte Template-Auswahl für konsistente aber variierende Vision
+        today = datetime.date.today()
+        date_hash = int(hashlib.md5(f"{topic}{today}".encode()).hexdigest(), 16)
+        
+        # 5 verschiedene Future Vision Templates
+        vision_templates = [
+            # Template 1: Industrie-Transformation  
+            f"""🚀 2030: Die große XRechnung-Revolution ist da!
 
-*Zeitreise aktiviert* ⚡
+*Flashforward aktiviert* 💫
 
-Dr. Mueller betritt ihr vollständig digitales Büro. Keine Papierstapel, keine nächtlichen Rechnungs-Sessions mehr. Ihre KI-Assistentin begrüßt sie: "Guten Morgen! Alle 847 Rechnungen von gestern wurden automatisch verarbeitet. Compliance: 100%."
+Ein Unternehmerverband berichtet: "99% aller deutschen Unternehmen nutzen jetzt vollautomatische XRechnung-Verarbeitung. Manuelle Rechnungsbearbeitung ist Geschichte."
 
-🌟 So sieht die Zukunft aus:
-• XRechnung-Standard ist überall selbstverständlich  
-• KI übernimmt repetitive Aufgaben vollständig
-• Unternehmen fokussieren sich auf Innovation"""
+🌟 Was heute noch Zukunft scheint:
+• Millisekunden-Rechnungsverarbeitung
+• Zero-Error-Compliance durch KI
+• Grenzenloses digitales Geschäft""",
+
+            # Template 2: Persönliche CEO-Vision
+            f"""🔮 Blick ins Jahr 2030...
+
+*Vision aktiviert* ✨
+
+CEO Sarah K. schaut auf ihre Statistik: "Letztes Jahr: 15.000 Rechnungen, 0 manuelle Eingriffe, 100% Compliance-Rate. XRechnung hat unser Geschäft revolutioniert."
+
+🌟 Die neue Realität:
+• Vollständige Automatisierung ist Standard
+• Unternehmen fokussieren auf Innovation statt Verwaltung  
+• EU-weite nahtlose Geschäftsprozesse""",
+
+            # Template 3: Markt-Transformation
+            f"""⚡ 2030: Der deutsche Mittelstand ist digital!
+
+*Zukunftsscan aktiviert* 📊
+
+Aktuelle Zahlen zeigen: Über 4 Millionen deutsche Unternehmen verarbeiten täglich 50+ Millionen XRechnungen vollautomatisch. Der Produktivitätssprung ist messbar.
+
+🌟 Diese Zukunft ist real:
+• 95% Kostenreduktion in der Rechnungsbearbeitung
+• Fehlerquote unter 0,1%
+• Neue Geschäftsmodelle durch Effizienz""",
+
+            # Template 4: Technologie-Vision  
+            f"""🔬 2030: XRechnung 5.0 ist Realität!
+
+*Innovation aktiviert* 🧬
+
+Die nächste Generation ist da: KI-gesteuerte XRechnungen passen sich automatisch an Geschäftsregeln an. Blockchain sichert jeden Transaktion. Quantenverschlüsselung schützt sensible Daten.
+
+🌟 Technologie der Zukunft:
+• Adaptive KI optimiert jeden Prozess
+• Real-Time-Compliance in 27 EU-Ländern
+• Quantum-sichere Rechnungsverarbeitung""",
+
+            # Template 5: Gesellschafts-Impact
+            f"""🌍 2030: XRechnung rettet den Planeten!
+
+*Impact aktiviert* 🌱
+
+Studie zeigt: Durch vollständige XRechnung-Digitalisierung werden jährlich 2,3 Millionen Tonnen Papier gespart. 180.000 Arbeitsstunden pro Tag für Innovationen freigesetzt.
+
+🌟 Der große Wandel:
+• Papierlose Wirtschaft ist Realität
+• Millionen Stunden für Kreativität gewonnen  
+• Nachhaltigkeit durch Effizienz"""
+        ]
+        
+        # Wähle Template basierend auf Datum
+        selected_template = vision_templates[date_hash % len(vision_templates)]
+        story = selected_template
 
         # Füge aktuellen Countdown hinzu
         if countdown_data and countdown_data.get('next_milestone'):
