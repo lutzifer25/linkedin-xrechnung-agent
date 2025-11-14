@@ -7,7 +7,8 @@ from agents.content_agent import ContentAgent
 from agents.review_agent import ReviewAgent
 # ImageAgent wird lazy geladen um Railway Kompatibilität zu verbessern
 from services.linkedin_client import LinkedInClient
-from config import INCLUDE_IMAGES
+from config import INCLUDE_IMAGES, get_research_model, get_review_model
+from post_history import post_tracker
 from typing import Dict, Optional
 import logging
 
@@ -83,6 +84,10 @@ class LinkedInPostMultiAgentSystem:
             logger.info("🔍 Schritt 4: Review durch Review Agent (Text + Bild)")
             review_result = self.review_agent.review_post(post_text, research_data, image_data)
             
+            # Sammle AI-Provider-Informationen für Tracking
+            research_model = get_research_model()
+            review_model = get_review_model()
+            
             # Schritt 5: Post verbessern falls nötig
             if not review_result["approved"]:
                 logger.info("🔧 Schritt 5: Post wird verbessert")
@@ -112,6 +117,46 @@ class LinkedInPostMultiAgentSystem:
                         
             elif auto_post and not review_result["approved"]:
                 logger.warning("❌ Post wurde nicht genehmigt und wird nicht gepostet")
+            
+            # Post-Tracking hinzufügen
+            linkedin_post_id = None
+            linkedin_posted = False
+            if post_status:
+                # LinkedIn Client kann verschiedene Formate zurückgeben
+                if isinstance(post_status, dict):
+                    linkedin_post_id = post_status.get('post_id') or post_status.get('id')
+                    linkedin_posted = linkedin_post_id is not None
+                elif isinstance(post_status, str):
+                    linkedin_post_id = post_status
+                    linkedin_posted = True
+                else:
+                    linkedin_posted = bool(post_status)
+            
+            mode = "post" if auto_post else "preview"
+            
+            # Erstelle Post-Tracking Entry
+            tracking_entry = post_tracker.add_post(
+                topic=topic or "XRechnung Post",
+                post_text=post_text,
+                storytelling_structure=storytelling_structure,
+                research_model=research_model,
+                review_model=review_model,
+                review_score=review_result["score"],
+                image_theme=image_data.get('theme') if image_data else None,
+                image_url=image_data.get('url') if image_data else None,
+                linkedin_post_id=linkedin_post_id,
+                mode=mode
+            )
+            
+            # Update tracking entry mit LinkedIn Status
+            if linkedin_posted:
+                # Aktualisiere Post-Status in der Historie
+                for post in post_tracker.history:
+                    if post["id"] == tracking_entry["id"]:
+                        post["linkedin"]["posted"] = True
+                        post["linkedin"]["post_id"] = linkedin_post_id
+                        break
+                post_tracker._save_history()
             
             # Extrahiere Daten für Rückgabe
             invory_data = research_data.get('invory_data', {})

@@ -29,9 +29,9 @@ def main():
     )
     parser.add_argument(
         '--mode',
-        choices=['preview', 'post', 'schedule'],
+        choices=['preview', 'post', 'schedule', 'history'],
         default='preview',
-        help='Modus: preview (nur anzeigen), post (sofort posten), schedule (automatisch planen)'
+        help='Modus: preview (nur anzeigen), post (sofort posten), schedule (automatisch planen), history (Post-Historie)'
     )
     parser.add_argument(
         '--topic',
@@ -100,6 +100,44 @@ def main():
         logger.info("Schedule-Modus: Starte automatischen Scheduler")
         scheduler = PostScheduler()
         scheduler.run(args.frequency, args.time)
+    
+    elif args.mode == 'history':
+        # History-Modus: Zeige Post-Historie
+        from post_history import post_tracker
+        
+        print("\n📊 POST HISTORIE ANALYSEN")
+        print("=" * 60)
+        
+        # Letzte 7 Tage Übersicht
+        post_tracker.print_recent_summary(7)
+        
+        # Storytelling Stats
+        story_stats = post_tracker.get_storytelling_stats(30)
+        if story_stats:
+            print("\n🎭 STORYTELLING STRUKTUREN (30 Tage):")
+            for structure, count in story_stats.items():
+                print(f"  📖 {structure}: {count}x")
+        
+        # AI-Provider Stats  
+        ai_stats = post_tracker.get_ai_provider_stats(30)
+        if ai_stats:
+            print("\n🧠 AI-PROVIDER USAGE (30 Tage):")
+            print("  Research Models:")
+            for model, count in ai_stats["research_models"].items():
+                print(f"    🔬 {model[:25]}: {count}x")
+            print("  Review Models:")
+            for model, count in ai_stats["review_models"].items():
+                print(f"    ✅ {model[:25]}: {count}x")
+        
+        # Heutige Posts
+        today_posts = post_tracker.get_posts_today()
+        if today_posts:
+            print(f"\n📅 HEUTE ({len(today_posts)} Posts):")
+            for post in today_posts:
+                status = "🔴 GEPOSTET" if post.get("linkedin", {}).get("posted") else "👁️ PREVIEW"
+                print(f"  {post.get('time')} | {status} | {post.get('topic', 'N/A')[:30]}")
+        else:
+            print("\n📅 HEUTE: Keine Posts erstellt")
 
 if __name__ == "__main__":
     main()

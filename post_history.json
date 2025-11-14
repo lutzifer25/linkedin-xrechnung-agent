@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2025-11-14T19:35:28.859957",
+    "date": "2025-11-14",
+    "time": "19:35:28",
+    "mode": "preview",
+    "topic": "Post Tracking Test",
+    "storytelling_structure": {
+      "name": "Problem-Solution",
+      "structure": "Alltagsproblem schildern → XRechnung als elegante Lösung vorstellen → Transformation zeigen",
+      "tone": "praktisch, lösungsorientiert"
+    },
+    "ai_providers": {
+      "research_model": "gpt-4-turbo-preview",
+      "review_model": "claude-3-sonnet-20240229"
+    },
+    "review_score": 100,
+    "character_count": 1090,
+    "image": {
+      "theme": "Zukunftsvision: moderne digitale Bürolandschaft",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": null,
+      "posted": false
+    },
+    "content_preview": "😰 Kennst du das Gefühl?\n\nEs ist Freitagabend, 19:30 Uhr. Während andere bereits das Wochenende genie..."
+  },
+  {
+    "id": 2,
+    "timestamp": "2025-11-14T19:36:55.174168",
+    "date": "2025-11-14",
+    "time": "19:36:55",
+    "mode": "post",
+    "topic": "Post Tracking System Launch",
+    "storytelling_structure": "Future Vision",
+    "ai_providers": {
+      "research_model": "gpt-4-turbo-preview",
+      "review_model": "claude-3-sonnet-20240229"
+    },
+    "review_score": 100,
+    "character_count": 1056,
+    "image": {
+      "theme": "Compliance: Schild oder Häkchen symbolisiert erfüllte Anforderungen",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": null,
+      "posted": false
+    },
+    "content_preview": "🔮 Eine Reise ins Jahr 2030...\n\n*Zeitreise aktiviert* ⚡\n\nDr. Mueller betritt ihr vollständig digitale..."
+  }
+]
