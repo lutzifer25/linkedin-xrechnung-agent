@@ -202,5 +202,105 @@
       "posted": false
     },
     "content_preview": "🌍 2030: XRechnung rettet den Planeten!\n\n*Impact aktiviert* 🌱\n\nStudie zeigt: Durch vollständige XRech..."
+  },
+  {
+    "id": 9,
+    "timestamp": "2025-11-14T20:16:05.472362",
+    "date": "2025-11-14",
+    "time": "20:16:05",
+    "mode": "post",
+    "topic": "XRechnung Donnerstag Abend Wrap-up",
+    "storytelling_structure": "Problem-Solution",
+    "ai_providers": {
+      "research_model": "gpt-4-turbo-preview",
+      "review_model": "claude-3-sonnet-20240229"
+    },
+    "review_score": 100,
+    "character_count": 1080,
+    "image": {
+      "theme": "digitale Transformation: Papierrechnungen werden zu digitalen Dokumenten",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": "urn:li:share:7395177723763240961",
+      "posted": true
+    },
+    "content_preview": "😰 Kennst du das Gefühl?\n\nEs ist Freitagabend, 19:30 Uhr. Während andere bereits das Wochenende genie..."
+  },
+  {
+    "id": 10,
+    "timestamp": "2025-11-15T18:56:59.818637",
+    "date": "2025-11-15",
+    "time": "18:56:59",
+    "mode": "preview",
+    "topic": "XRechnung Digitalisierung 2024",
+    "storytelling_structure": "Future Vision",
+    "ai_providers": {
+      "research_model": "claude-3-sonnet-20240229",
+      "review_model": "gpt-4-turbo-preview"
+    },
+    "review_score": 100,
+    "character_count": 954,
+    "image": {
+      "theme": "Countdown: Kalender oder Timer zeigt nahende Deadlines",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": null,
+      "posted": false
+    },
+    "content_preview": "🔮 Blick ins Jahr 2030...\n\n*Vision aktiviert* ✨\n\nCEO Sarah K. schaut auf ihre Statistik: \"Letztes Jah..."
+  },
+  {
+    "id": 11,
+    "timestamp": "2025-11-15T18:58:09.437644",
+    "date": "2025-11-15",
+    "time": "18:58:09",
+    "mode": "preview",
+    "topic": "XRechnung Compliance Test",
+    "storytelling_structure": "Problem-Solution",
+    "ai_providers": {
+      "research_model": "claude-3-sonnet-20240229",
+      "review_model": "gpt-4-turbo-preview"
+    },
+    "review_score": 100,
+    "character_count": 1072,
+    "image": {
+      "theme": "Compliance: Schild oder Häkchen symbolisiert erfüllte Anforderungen",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": null,
+      "posted": false
+    },
+    "content_preview": "😰 Kennst du das Gefühl?\n\nEs ist Freitagabend, 19:30 Uhr. Während andere bereits das Wochenende genie..."
+  },
+  {
+    "id": 12,
+    "timestamp": "2025-11-15T19:01:12.625887",
+    "date": "2025-11-15",
+    "time": "19:01:12",
+    "mode": "post",
+    "topic": "XRechnung Black Friday 2024",
+    "storytelling_structure": "Problem-Solution",
+    "ai_providers": {
+      "research_model": "claude-3-sonnet-20240229",
+      "review_model": "gpt-4-turbo-preview"
+    },
+    "review_score": 100,
+    "character_count": 1089,
+    "image": {
+      "theme": "Problemlösung: Komplexe Prozesse werden vereinfacht dargestellt",
+      "url": null,
+      "included": false
+    },
+    "linkedin": {
+      "post_id": "urn:li:share:7395521265400238080",
+      "posted": true
+    },
+    "content_preview": "😰 Kennst du das Gefühl?\n\nEs ist Freitagabend, 19:30 Uhr. Während andere bereits das Wochenende genie..."
   }
 ]
